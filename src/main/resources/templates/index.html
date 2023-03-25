@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TicTacToe Game</title>
+</head>
+<body>
+<h1>TicTacToe Game</h1>
+<form action="#" th:action="@{/init}" th:object="${gameMode}" method="POST">
+    <label for="dimension">Input Size:</label>
+    <input type="number" th:field="*{dimension}" id="dimension" name="dimension" placeholder=3/><br/><br/>
+    <button type="submit" class="btn btn-info col-2">
+        Start Game
+    </button>
+</form>
+</body>
+</html>

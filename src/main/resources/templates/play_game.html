@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TicTacToe Game</title>
+</head>
+<body>
+<h1>TicTacToe Game</h1>
+<h2>Current Status: <span th:text="${status}"></span></h2>
+<table>
+    <tr th:each="row : ${board}">
+        <td th:each="cell : ${row}">
+            <form th:if="${cell} == ''" method="post" th:action="@{/tictactoe/play}">
+                <input type="hidden" name="row" th:value="${rowStat.index}"/>
+                <input type="hidden" name="col" th:value="${cellStat.index}"/>
+                <button th:text="'Player ' + ${currentPlayer} + ' turn'">Play</button>
+            </form>
+            <span th:if="${cell} != ''" th:text="${cell}"></span>
+        </td>
+    </tr>
+</table>
+<form method="post" th:action="@{/tictactoe/status}">
+    <input type="submit" value="Get Status"/>
+</form>
+</body>
+</html>

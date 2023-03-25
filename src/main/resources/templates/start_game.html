@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TicTacToe Game</title>
+</head>
+<body>
+<h1>Welcome to TicTacToe!</h1>
+<form method="post" th:action="@{/tictactoe/init}">
+    <label for="size">Board Size:</label>
+    <input type="number" id="size" name="size" required/>
+    <br/>
+    <label for="vsPlayer">Play against Player:</label>
+    <input type="radio" id="vsPlayer" name="isVsPlayer" value="true" checked="checked"/>
+    <label for="vsComputer">Play against Computer:</label>
+    <input type="radio" id="vsComputer" name="isVsPlayer" value="false"/>
+    <br/>
+    <input type="submit" value="Start Game"/>
+</form>
+</body>
+</html>
