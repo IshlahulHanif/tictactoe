@@ -5,9 +5,10 @@
 </head>
 <body>
 <h1>TicTacToe Game</h1>
+<p th:text="${message}"></p>
 <form action="#" th:action="@{/init}" th:object="${gameMode}" method="POST">
-    <label for="dimension">Input Size:</label>
-    <input type="number" th:field="*{dimension}" id="dimension" name="dimension" placeholder=3/><br/><br/>
+    <label for="size">Input Size:</label>
+    <input type="text" class="form-control" th:field="*{size}" id="size" placeholder="3">
     <button type="submit" class="btn btn-info col-2">
         Start Game
     </button>

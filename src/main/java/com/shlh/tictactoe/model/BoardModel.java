@@ -3,10 +3,9 @@ package com.shlh.tictactoe.model;
 public class BoardModel {
     private final char[][] board;
     private final int size;
-
-    private static final char X = 'X'; // TODO: use enum class?
-    private static final char O = 'O';
-    private static final char EMPTY = '-';
+    public static final char X = 'X'; // TODO: use enum class?
+    public static final char O = 'O';
+    public static final char EMPTY = '-';
 
     public BoardModel(int size) {
         this.board = new char[size][size];
@@ -31,7 +30,7 @@ public class BoardModel {
         return board;
     }
 
-    private char checkWinner() {
+    public char checkWinner() {
         boolean isWin;
         // Check rows
         for (int i = 0; i < size; i++) {
@@ -50,7 +49,7 @@ public class BoardModel {
         // Check columns
         for (int i = 0; i < size; i++) {
             char first = board[0][i];
-            if (first == ' ') continue;
+            if (first == EMPTY) continue;
             isWin = true;
             for (int j = 1; j < size; j++) {
                 if (board[j][i] != first) {
@@ -63,7 +62,7 @@ public class BoardModel {
 
         // Check diagonals
         char first = board[0][0];
-        if (first != ' ') {
+        if (first != EMPTY) {
             isWin = true;
             for (int i = 1; i < size; i++) {
                 if (board[i][i] != first) {
@@ -89,7 +88,7 @@ public class BoardModel {
         return EMPTY;
     }
 
-    private boolean checkDraw() {
+    public boolean checkDraw() {
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 if (board[row][col] == EMPTY) {

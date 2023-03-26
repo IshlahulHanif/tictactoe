@@ -4,22 +4,18 @@
     <title>TicTacToe Game</title>
 </head>
 <body>
-<h1>TicTacToe Game</h1>
-<h2>Current Status: <span th:text="${status}"></span></h2>
-<table>
-    <tr th:each="row : ${board}">
-        <td th:each="cell : ${row}">
-            <form th:if="${cell} == ''" method="post" th:action="@{/tictactoe/play}">
-                <input type="hidden" name="row" th:value="${rowStat.index}"/>
-                <input type="hidden" name="col" th:value="${cellStat.index}"/>
-                <button th:text="'Player ' + ${currentPlayer} + ' turn'">Play</button>
-            </form>
-            <span th:if="${cell} != ''" th:text="${cell}"></span>
-        </td>
-    </tr>
-</table>
-<form method="post" th:action="@{/tictactoe/status}">
-    <input type="submit" value="Get Status"/>
-</form>
+    <h1>TicTacToe Game</h1>
+    <p th:text="${message}"></p>
+    <table>
+        <tr th:each="row, rowIdx : ${board.getBoard()}">
+            <td th:each="cell, colIdx : ${row}">
+                <form th:action="@{/play}" method="POST">
+                    <input type="hidden" name="row" th:value="${rowIdx.index}"/>
+                    <input type="hidden" name="col" th:value="${colIdx.index}"/>
+                    <button type="submit" th:text="${cell}"></button>
+                </form>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

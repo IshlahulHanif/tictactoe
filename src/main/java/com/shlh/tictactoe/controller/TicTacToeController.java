@@ -2,14 +2,13 @@ package com.shlh.tictactoe.controller;
 
 import com.shlh.tictactoe.enums.GameStatus;
 import com.shlh.tictactoe.model.BoardModel;
+import com.shlh.tictactoe.model.GameMode;
 import com.shlh.tictactoe.service.GameService;
-import com.shlh.tictactoe.service.GameServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -24,61 +23,67 @@ public class TicTacToeController {
 
     // Get mapping for init web view
     @GetMapping("/")
-    public String home () {
+    public String home(Model model) {
+        GameMode gameMode = new GameMode();
+        model.addAttribute("gameMode", gameMode);
+        return "index";
+    }
+
+    @GetMapping("/play_game")
+    public String playGame(Model model) {
+        BoardModel board = gameService.getBoard();
+        if (board == null) {
+            return "index";
+        }
+        model.addAttribute("board", board);
+
+        GameStatus status = gameService.getCurrentStatus();
+        model.addAttribute("message", status);
         return "play_game";
     }
 
-    @GetMapping("/game")
-    public ResponseEntity<BoardModel> getBoard() {
-        BoardModel board = gameService.getBoard();
-        if (board == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(board);
+    @GetMapping("/game_end")
+    public String endGame(Model model) {
+        GameStatus status = gameService.getCurrentStatus();
+        model.addAttribute("message", status);
+        return "game_end";
     }
 
     @PostMapping("/play")
-    public ResponseEntity<String> play(@RequestParam int row, @RequestParam int col) { //TODO: make response of message + can game continue ?
+    public String play(@RequestParam int row, @RequestParam int col, Model model) {
+        BoardModel board = gameService.getBoard();
+        if (board == null) {
+            return "redirect:/index";
+        }
+        model.addAttribute("board", board);
+
         if (row < 0 || col < 0) {
-            return ResponseEntity.badRequest().body("Invalid move");
+            model.addAttribute("message", "Invalid move");
+            return "play_game";
         }
 
         GameStatus status = gameService.getCurrentStatus();
-        if (status == GameStatus.NotStarted) {
-            return ResponseEntity.badRequest().body("Cannot play the game yet");
-        }
-
-        if (status.isEnd()) {
-            return ResponseEntity.badRequest().body("Game has already ended");
+        if (!status.isPlayable()) {
+            model.addAttribute("message", "Cannot play the game yet");
+            return "play_game"; //TODO: redirect somewhere else
         }
 
         status = gameService.play(row, col);
-        return getStringResponseEntity(status);
+        model.addAttribute("message", status);
+
+        if (status.isEnd()) {
+            return "redirect:/game_end";
+        }
+
+        return "play_game";
     }
 
     @PostMapping("/init")
-    public ResponseEntity<BoardModel> initGame(@RequestParam int size, @RequestParam boolean isVsPlayer) {
-        BoardModel board = gameService.initGame(size);
+    public String initGame(GameMode gameMode, Model model) {
+        BoardModel board = gameService.initGame(gameMode.getSize());
         if (board == null) {
-            ResponseEntity.internalServerError().body("Something went wrong");
+            return "redirect:/";
         }
-        return ResponseEntity.ok(board);
-    }
-
-    @PostMapping("/status")
-    public ResponseEntity<String> status() { //TODO: make response of message + can game continue ?
-        GameStatus status = gameService.getCurrentStatus();
-        return getStringResponseEntity(status);
-    }
-
-    private ResponseEntity<String> getStringResponseEntity(GameStatus status) { // TODO: rename?
-        return switch (status) {
-            case PlayerXWin -> ResponseEntity.ok().body("Player X wins!");
-            case PlayerOWin -> ResponseEntity.ok().body("Player O wins!");
-            case PlayerXTurn -> ResponseEntity.ok().body("Player X turn");
-            case PLayerOTurn -> ResponseEntity.ok().body("Player O turn");
-            case Draw -> ResponseEntity.ok().body("Draw!");
-            default -> ResponseEntity.internalServerError().body("Something went wrong");
-        };
+        return "redirect:/play_game";
     }
 }
