@@ -29,6 +29,9 @@ public class BoardModel {
     public char[][] getBoard() {
         return board;
     }
+    public int getSize() {
+        return this.size;
+    }
 
     public char checkWinner() {
         boolean isWin;

@@ -29,6 +29,7 @@ public class TicTacToeController {
         return "index";
     }
 
+    // Get mapping for init web view
     @GetMapping("/play_game")
     public String playGame(Model model) {
         BoardModel board = gameService.getBoard();
@@ -42,6 +43,7 @@ public class TicTacToeController {
         return "play_game";
     }
 
+    // Get mapping for init web view
     @GetMapping("/game_end")
     public String endGame(Model model) {
         GameStatus status = gameService.getCurrentStatus();

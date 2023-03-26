@@ -10,8 +10,11 @@ public class GameServiceImpl implements GameService{
     private BoardModel gameBoardModel;
     private Player currentPlayer;
 
+    private GameStatus status;
+
     GameServiceImpl() { // TODO: remove example template
         this.gameBoardModel = new BoardModel(3);
+        this.status = GameStatus.PlayerXTurn;
     }
 
     @Override
@@ -20,44 +23,49 @@ public class GameServiceImpl implements GameService{
     }
 
     @Override
-    public boolean isPlayable() {
-        // TODO: implement
-        return false;
-    }
-
-    @Override
     public BoardModel initGame(int size) {
         this.gameBoardModel = new BoardModel(size);
         this.currentPlayer = Player.X;
+        this.status = GameStatus.PlayerXTurn;
         return gameBoardModel;
     }
 
     @Override
     public GameStatus play(int row, int col) {
+        if (status.isEnd()) {
+            return GameStatus.Invalid;
+        }
+
         boolean isMoveValid = gameBoardModel.play(row, col, currentPlayer == Player.X);
         if (!isMoveValid) {
             return GameStatus.Invalid;
         }
 
         currentPlayer = currentPlayer == Player.X ? Player.O : Player.X;
-        return getCurrentStatus();
+        return getAndCalculateCurrentStatus();
+    }
+
+    @Override
+    public GameStatus getAndCalculateCurrentStatus() {
+        updateCurrentStatus();
+        return status;
     }
 
     @Override
     public GameStatus getCurrentStatus() {
+        return this.status;
+    }
+
+    private void updateCurrentStatus() {
         char winner = gameBoardModel.checkWinner();
         switch (winner) {
-            case BoardModel.X -> {
-                return GameStatus.PlayerXWin;
-            }
-            case BoardModel.O -> {
-                return GameStatus.PlayerOWin;
-            }
+            case BoardModel.X -> status = GameStatus.PlayerXWin;
+            case BoardModel.O -> status = GameStatus.PlayerOWin;
             default -> {
                 if (gameBoardModel.checkDraw()) {
-                    return GameStatus.Draw;
+                    status = GameStatus.Draw;
                 } else {
-                    return currentPlayer == Player.X ? GameStatus.PlayerXTurn : GameStatus.PlayerOTurn;
+                    status = currentPlayer == Player.X ? GameStatus.PlayerXTurn : GameStatus.PlayerOTurn;
                 }
             }
         }
