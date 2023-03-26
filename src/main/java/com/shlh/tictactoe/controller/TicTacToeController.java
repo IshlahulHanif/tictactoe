@@ -82,6 +82,16 @@ public class TicTacToeController {
 
     @PostMapping("/init")
     public String initGame(GameMode gameMode, Model model) {
+        if (gameMode.getSize() == null) {
+            model.addAttribute("message", "Please select a number");
+            return "index";
+        }
+
+        if (gameMode.getSize() < 3) {
+            model.addAttribute("message", "Minimal size is 3");
+            return "index";
+        }
+
         BoardModel board = gameService.initGame(gameMode.getSize());
         if (board == null) {
             return "redirect:/";
